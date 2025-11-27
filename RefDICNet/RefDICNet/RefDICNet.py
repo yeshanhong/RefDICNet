@@ -43,7 +43,7 @@ class RefDICNet(torch.nn.Module):
         self.backbone = ResNetEncoder(output_dim=192, num_output_scales=2)
         self.Transformer = transformer.FeatureAttention(config.feature_dim_s4 + config.context_dim_s4,
                                                            num_layers=2, ffn=True, ffn_dim_expansion=1, post_norm=True)
-
+        self.flow_attn = transformer.FlowAttention(config.feature_dim_s4)
         self.corr_block_s4 = corr.CorrBlock(radius=4, levels=1)
         self.corr_block_s2 = corr.CorrBlock(radius=4, levels=1)
 
@@ -161,5 +161,6 @@ class RefDICNet(torch.nn.Module):
 
                 up_flow0 = self.upsample_s2(mask_up, flow0) * 2
                 flow_list.append(up_flow0)
+
 
         return flow_list
